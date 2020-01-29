@@ -1,0 +1,48 @@
+{
+  "name": "planeacionRetiro",
+  "version": "1.0.0",
+  "description": "stock portfolio manager",
+  "main": "server.js",
+  "scripts": {
+    "seed": "node scripts/seedDB.js",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "if-env NODE_ENV=production && npm run start:prod || npm run start:dev",
+    "start:prod": "node server.js",
+    "start:dev": "concurrently \"nodemon --ignore 'client/*'\" \"npm run client\"",
+    "client": "cd client && npm run start",
+    "install": "cd client && npm install",
+    "build": "cd client && npm run build",
+    "heroku-postbuild": "npm run build"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/cirus55/planeacionRetiro.git"
+  },
+  "keywords": [
+    "portfolio",
+    "manager",
+    "stocks",
+    "finance"
+  ],
+  "author": "cirus55",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/cirus55/planeacionRetiro/issues"
+  },
+  "homepage": "https://github.com/cirus55/planeacionRetiro#readme",
+  "dependencies": {
+    "axios": "^0.19.0",
+    "cheerio": "^1.0.0-rc.3",
+    "concurrently": "^4.1.1",
+    "dotenv": "^8.0.0",
+    "express": "^4.17.1",
+    "if-env": "^1.0.4",
+    "mongoose": "^5.6.7",
+    "pusher": "^2.2.2",
+    "request": "^2.88.0",
+    "request-json": "^0.6.4",
+    "sentiment": "^5.0.1",
+    "twilio": "^3.33.3",
+    "twit": "^2.2.11"
+  }
+}
