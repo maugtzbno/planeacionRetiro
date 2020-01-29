@@ -6,9 +6,11 @@ require("dotenv").config()
 function ahorro(ingresoMensualBruto, tasaRetencion, gastoMensual, edadActual, edadRetiro, tasaReal, saldoAhorro, aforeSaldo){
     meses = (edadRetiro - edadActual)*12 +1
     saldoFinal = 0;
+    saldoFinalArr = [];
     for (var i=0; i<meses; i++){
         if (i==0) {
             saldoFinal += saldoAhorro
+            saldoFinalArr.push(saldoFinal)
         }
         else if (edadActual + i/12 == 65) {
             saldoFinal += ingresoMensualBruto * (1 - tasaRetencion) - gastoMensual
@@ -19,28 +21,33 @@ function ahorro(ingresoMensualBruto, tasaRetencion, gastoMensual, edadActual, ed
             c = 0.80 * ingresoMensualBruto * 0.065
             d = ((((1 + tasaReal)**(1/12))**i * ((1 - .01)**(1/12))**i-1)/(((1 + tasaReal)**(1/12)) * ((1 - .01)**(1/12))-1))
             saldoFinal += aforeSaldo * a * b + (c * d)
+            saldoFinalArr.push(saldoFinal)
         }
         else {
             saldoFinal += ingresoMensualBruto * (1 - tasaRetencion) - gastoMensual
             saldoFinal = saldoFinal * (1 + tasaReal/12)
+            saldoFinalArr.push(saldoFinal)
         }
     }
-    return saldoFinal        
+    return [ saldoFinal, saldoFinalArr ]        
 }
 
 function gasto(gastoMensual, edadRetiro, edadEsperanza, tasaReal, saldoInicial){
     meses = (edadEsperanza - edadRetiro)*12 +1
     saldoFinal = 0;
+    saldoFinalArr = [];
     for (var i=0; i<meses; i++){
         if (i==0) {
             saldoFinal += saldoInicial
+            saldoFinalArr.push(saldoFinal)
         }
         else {
             saldoFinal = saldoFinal * (1 + tasaReal/12)
             saldoFinal = saldoFinal - gastoMensual
+            saldoFinalArr.push(saldoFinal)
         }
     }
-    return saldoFinal 
+    return [ saldoFinal, saldoFinalArr ] 
 }
 
 function calcSaldoInicial(gastoMensual, edadRetiro, edadEsperanza, tasaReal){
@@ -48,7 +55,7 @@ function calcSaldoInicial(gastoMensual, edadRetiro, edadEsperanza, tasaReal){
     saldoInicialTest = 0
     i=0;
     while (saldoFinal < 0){
-        saldoFinal = gasto(gastoMensual, edadRetiro, edadEsperanza, tasaReal, saldoInicialTest+i*10000)
+        saldoFinal = gasto(gastoMensual, edadRetiro, edadEsperanza, tasaReal, saldoInicialTest+i*10000)[0]
         i +=1
     }
     return saldoInicialTest+i*10000
@@ -59,7 +66,7 @@ function calcAhorroInicial(objetivoAhorro, tasaRetencion, gastoMensual, edadActu
     ingresoMensualBruto = gastoMensual;
     i=0;
     while(saldoFinal<objetivoAhorro){
-        saldoFinal = ahorro(ingresoMensualBruto+i*100, tasaRetencion, gastoMensual, edadActual, edadRetiro, tasaReal, saldoAhorro, aforeSaldo)
+        saldoFinal = ahorro(ingresoMensualBruto+i*100, tasaRetencion, gastoMensual, edadActual, edadRetiro, tasaReal, saldoAhorro, aforeSaldo)[0]
         i+=1
     }
     return ((ingresoMensualBruto+i*100)*(1-tasaRetencion)-gastoMensual)
@@ -92,9 +99,9 @@ function retiro(data){
     aforeSaldo = data.aforeSaldo*1;
 
     tasaRealAhorro = 0.04;
-    pronosticoAhorro = ahorro(ingresoMensualBruto, tasaRetencion, gastoMensual, edadActual, edadRetiro, tasaRealAhorro, saldoActual, aforeSaldo);
+    pronosticoAhorro = ahorro(ingresoMensualBruto, tasaRetencion, gastoMensual, edadActual, edadRetiro, tasaRealAhorro, saldoActual, aforeSaldo)[0];
     tasaRealRetiro = 0.03; 
-    pronosticoHerencia = gasto(gastoMensual, edadRetiro, edadEsperanza, tasaRealRetiro, pronosticoAhorro)
+    pronosticoHerencia = gasto(gastoMensual, edadRetiro, edadEsperanza, tasaRealRetiro, pronosticoAhorro)[0]
 
     objetivoHerencia = 0;
     objetivoAhorro = calcSaldoInicial(gastoMensual, edadRetiro, edadEsperanza, tasaRealRetiro)
@@ -173,6 +180,15 @@ router.post("/sendData", function(req, res){
         .then(data => res.json(data))
         .catch(err => res.status(422).json(err));
 
+})
+
+router.use("/getScenario", function (req, res){
+    ahorroFin = ahorro(100000, 0.30, 65000, 30, 65, 0.04, 50000, 100000)[0];
+    ahorroScen = ahorro(100000, 0.30, 65000, 30, 65, 0.04, 50000, 100000)[1];
+    gastoFin = gasto(65000, 65, 85, 0.03, ahorroFin)[0]
+    gastoScen = gasto(65000, 65, 85, 0.03, ahorroFin)[1]
+    data = {ahorroScen, gastoScen}
+    res.json(data)
 })
 
 // If no API routes are hit, send the React app

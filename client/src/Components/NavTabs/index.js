@@ -87,7 +87,7 @@ const useStyles = makeStyles(theme => ({
 // This resolves to nothing and doesn't affect browser history
 const Inicio = "/";
 const Calculo = "/Calculo"
-const Investigar = "/Investigar"
+const Retiro = "/Retiro"
 const Inversion = "/Inversion"
 
 
@@ -134,8 +134,8 @@ export default function Links() {
       
         <Grid item xs={3}>
         <ColorButton variant="contained" color="primary" className={classes.margin}
-        Link href={Investigar} className={classes.link}>
-        Investigar
+        Link href={Retiro} className={classes.link}>
+        Planeación Retiro
         </ColorButton>
         </Grid>
 
