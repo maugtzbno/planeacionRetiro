@@ -88,7 +88,7 @@ const useStyles = makeStyles(theme => ({
 const Inicio = "/";
 const Calculo = "/Calculo"
 const Retiro = "/Retiro"
-const Inversion = "/Inversion"
+const Contacto = "/Contacto"
 
 
 
@@ -141,8 +141,8 @@ export default function Links() {
 
         <Grid item xs={3}>
         <ColorButton variant="contained" color="primary" className={classes.margin}
-        Link href={Inversion} className={classes.link}>
-        Inversion
+        Link href={Contacto} className={classes.link}>
+        Contacto
       </ColorButton>
        
         </Grid>

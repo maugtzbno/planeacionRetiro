@@ -32,8 +32,17 @@ const RetSchema = new Schema({
     objetivoGastoMensual: { type: Number, required: true}
 });
 
+const ContSchema = new Schema({
+    nombre: { type: String, required: true},
+    email: { type: String, required: true},
+    celular: { type: Number, required: true}
+});
+
+const BaseCont = mongoose.model("BaseCont", ContSchema)
+
 const BaseRet = mongoose.model("BaseRet", RetSchema);
 
 module.exports = {
-    BaseRet: BaseRet
+    BaseRet: BaseRet,
+    BaseCont: BaseCont
 };

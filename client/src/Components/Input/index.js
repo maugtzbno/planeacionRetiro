@@ -3,17 +3,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import Input from '@material-ui/core/Input';
 import Button from '@material-ui/core/Button';
 import Icon from '@material-ui/core/Icon';
-import API from "../../utils"
-
-// const useStyles = makeStyles(theme => ({
-//   container: {
-//     display: 'flex',
-//     flexWrap: 'wrap',
-//   },
-//   input: {
-//     margin: theme.spacing(1),
-//   },
-// }));
+import API from '../../utils'
 
 class Inputs extends React.Component {
   classes = {
@@ -28,7 +18,7 @@ class Inputs extends React.Component {
 
   handleClick = event => {
     event.preventDefault();
-    API.sendMsg(this.state);
+    API.sendCont(this.state);
   }
 
   handleInputChange = event => {
@@ -42,28 +32,11 @@ class Inputs extends React.Component {
   render(){
   return (
     <div className={this.classes.container}>
+      <br></br>
       <form onSubmit={this.handleClick}>
       <Input
         placeholder="Nombre"
         name="nombre"
-        onChange={this.handleInputChange}
-        className={this.classes.input}
-        inputProps={{
-          'aria-label': 'description',
-        }}
-      />
-      <Input
-        placeholder="Primer Apellido"
-        name="primerapellido"
-        onChange={this.handleInputChange}
-        className={this.classes.input}
-        inputProps={{
-          'aria-label': 'description',
-        }}
-      />
-      <Input
-        placeholder="Segundo Apellido"
-        name="segungoapellido"
         onChange={this.handleInputChange}
         className={this.classes.input}
         inputProps={{
@@ -89,7 +62,7 @@ class Inputs extends React.Component {
         }}
       />
       <Button variant="contained" color="primary" className={this.classes.button} type="submit">
-        Send
+        Quiero ser contactado
         {/* This Button uses a Font Icon, see the installation instructions in the docs. */}
         <Icon className={this.classes.rightIcon}>send</Icon>
       </Button>

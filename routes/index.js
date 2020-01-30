@@ -199,6 +199,17 @@ router.use("/getScenario", function (req, res){
     res.json(data)
 })
 
+//send data to database
+router.post("/sendCont", function(req, res){
+    console.log("dentro de router")
+    console.log(req.body)
+    dataCont = req.body
+    db.BaseCont.collection
+        .insertMany(dataCont)
+        .then(data => res.json(data))
+        .catch(err => res.status(422).json(err));
+})
+
 // If no API routes are hit, send the React app
 router.use(function (req, res) {
     res.sendFile(path.join(__dirname, "../client/build/index.html"));

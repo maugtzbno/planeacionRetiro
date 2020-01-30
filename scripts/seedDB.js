@@ -56,4 +56,24 @@ mongoose.connect(
     process.exit(1);
   });
 
+  const contSeed = [
+    {
+      nombre: "Mauricio",
+      correo: "maugtzbno@gmail.com",
+      celular: 8116639856
+    }
+  ]
+
+  db.BaseCont
+  .remove({})
+  .then(() => db.BaseCont.collection.insertMany(contSeed))
+  .then(data => {
+    console.log(data.result.n + " records inserted!");
+    process.exit(0);
+  })
+  .catch(err => {
+    console.error(err);
+    process.exit(1);
+  });
+
 
