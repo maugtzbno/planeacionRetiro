@@ -3,7 +3,7 @@ const router = require("express").Router();
 const db = require("../models");
 require("dotenv").config()
 
-function ahorro(ingresoMensualBruto, tasaRetencion, gastoMensual, edadActual, edadRetiro, tasaReal, saldoAhorro, aforeSaldo){
+function ahorro(ingresoMensualBruto, tasaRetencion, gastoMensual, edadActual, edadRetiro, tasaReal, saldoAhorro, afore, aforeSaldo){
     meses = (edadRetiro - edadActual)*12 +1
     saldoFinal = 0;
     saldoFinalArr = [];
@@ -13,15 +13,17 @@ function ahorro(ingresoMensualBruto, tasaRetencion, gastoMensual, edadActual, ed
             saldoFinalArr.push(saldoFinal)
         }
         else if (edadActual + i/12 == 65) {
-            saldoFinal += ingresoMensualBruto * (1 - tasaRetencion) - gastoMensual
-            a = (1 + tasaReal)**(1/12)
-            a = a**i
-            b = (1 - .01)**(1/12)
-            b = b**i
-            c = 0.80 * ingresoMensualBruto * 0.065
-            d = ((((1 + tasaReal)**(1/12))**i * ((1 - .01)**(1/12))**i-1)/(((1 + tasaReal)**(1/12)) * ((1 - .01)**(1/12))-1))
-            saldoFinal += aforeSaldo * a * b + (c * d)
-            saldoFinalArr.push(saldoFinal)
+            if (afore){
+                saldoFinal += ingresoMensualBruto * (1 - tasaRetencion) - gastoMensual
+                a = (1 + tasaReal)**(1/12)
+                a = a**i
+                b = (1 - .01)**(1/12)
+                b = b**i
+                c = 0.80 * ingresoMensualBruto * 0.065
+                d = ((((1 + tasaReal)**(1/12))**i * ((1 - .01)**(1/12))**i-1)/(((1 + tasaReal)**(1/12)) * ((1 - .01)**(1/12))-1))
+                saldoFinal += aforeSaldo * a * b + (c * d)
+                saldoFinalArr.push(saldoFinal)
+            }
         }
         else {
             saldoFinal += ingresoMensualBruto * (1 - tasaRetencion) - gastoMensual
@@ -61,12 +63,12 @@ function calcSaldoInicial(gastoMensual, edadRetiro, edadEsperanza, tasaReal){
     return saldoInicialTest+i*10000
 }
 
-function calcAhorroInicial(objetivoAhorro, tasaRetencion, gastoMensual, edadActual, edadRetiro, tasaReal, saldoAhorro, aforeSaldo){
+function calcAhorroInicial(objetivoAhorro, tasaRetencion, gastoMensual, edadActual, edadRetiro, tasaReal, saldoAhorro, afore, aforeSaldo){
     saldoFinal = -1000;
     ingresoMensualBruto = gastoMensual;
     i=0;
     while(saldoFinal<objetivoAhorro){
-        saldoFinal = ahorro(ingresoMensualBruto+i*100, tasaRetencion, gastoMensual, edadActual, edadRetiro, tasaReal, saldoAhorro, aforeSaldo)[0]
+        saldoFinal = ahorro(ingresoMensualBruto+i*100, tasaRetencion, gastoMensual, edadActual, edadRetiro, tasaReal, saldoAhorro, afore, aforeSaldo)[0]
         i+=1
     }
     return ((ingresoMensualBruto+i*100)*(1-tasaRetencion)-gastoMensual)
@@ -183,11 +185,17 @@ router.post("/sendData", function(req, res){
 })
 
 router.use("/getScenario", function (req, res){
-    ahorroFin = ahorro(100000, 0.30, 65000, 30, 65, 0.04, 50000, 100000)[0];
-    ahorroScen = ahorro(100000, 0.30, 65000, 30, 65, 0.04, 50000, 100000)[1];
+    ahorroFin = ahorro(100000, 0.30, 65000, 30, 65, 0.04, 50000, 0, 0)[0];
+    ahorroScen = ahorro(100000, 0.30, 65000, 30, 65, 0.04, 50000, 0, 0)[1];
     gastoFin = gasto(65000, 65, 85, 0.03, ahorroFin)[0]
     gastoScen = gasto(65000, 65, 85, 0.03, ahorroFin)[1]
-    data = {ahorroScen, gastoScen}
+
+    ahorroFinOpt = ahorro(100000, 0.30, 65000, 30, 65, 0.05, 50000, 0, 0)[0];
+    ahorroScenOpt = ahorro(100000, 0.30, 65000, 30, 65, 0.05, 50000, 0, 0)[1];
+    gastoFinOpt = gasto(65000, 65, 85, 0.04, ahorroFin)[0]
+    gastoScenOpt = gasto(65000, 65, 85, 0.04, ahorroFin)[1]
+
+    data = {ahorroScen, ahorroScenOpt, gastoScen, gastoScenOpt}
     res.json(data)
 })
 

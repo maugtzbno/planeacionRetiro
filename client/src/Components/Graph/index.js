@@ -8,7 +8,9 @@ class linearGraph extends React.Component {
 
 	state = {
 		ahorroScen: [],
-		gastoScen: []
+		ahorroScenOpt: [],
+		gastoScen: [],
+		gastoScenOpt: []
 	}
 
 	componentDidMount = () => {
@@ -16,54 +18,79 @@ class linearGraph extends React.Component {
 			.then(x=>{
 				this.setState({
 					ahorroScen: x.data.ahorroScen,
-					gastoScen: x.data.gastoScen
+					ahorroScenOpt: x.data.ahorroScenOpt,
+					gastoScen: x.data.gastoScen,
+					gastoScenOpt: x.data.gastoScenOpt
 				})
 			}, x=>console.log(this.state))
 	}
 
 	render() {
-		const options = {
+		if (this.state.ahorroScen.length > 0) {
+			var dataAhorro = []
+			var dataGasto = []
+			for (var i=0; i<this.state.ahorroScen.length;i++){
+				dataAhorro.push({
+					x:i,
+					y: [this.state.ahorroScen[i], this.state.ahorroScenOpt[i]]
+				})
+			}
+
+			for (var j=0; j<this.state.gastoScen.length;j++){
+				dataGasto.push({
+					x:j,
+					y: [this.state.gastoScen[j], this.state.gastoScenOpt[j]]
+				})
+			}
+
+		}
+
+		const optionsA = {
 			animationEnabled: true,
 			title:{
-				text: "Monthly Sales - 2017"
+				text: "Periodo de Ahorro"
 			},
 			axisX: {
-				valueFormatString: "MMM"
+				valueFormatString: "###"
 			},
 			axisY: {
-				title: "Sales (in USD)",
+				title: "Inversion",
 				prefix: "$",
 				includeZero: false
 			},
 			data: [{
 				yValueFormatString: "$#,###",
-				xValueFormatString: "MMMM",
-				type: "spline",
-				dataPoints: [
-					{ x: new Date(2017, 0), y: 25060 },
-					{ x: new Date(2017, 1), y: 27980 },
-					{ x: new Date(2017, 2), y: 42800 },
-					{ x: new Date(2017, 3), y: 32400 },
-					{ x: new Date(2017, 4), y: 35260 },
-					{ x: new Date(2017, 5), y: 33900 },
-					{ x: new Date(2017, 6), y: 40000 },
-					{ x: new Date(2017, 7), y: 52500 },
-					{ x: new Date(2017, 8), y: 32300 },
-					{ x: new Date(2017, 9), y: 42000 },
-					{ x: new Date(2017, 10), y: 37160 },
-					{ x: new Date(2017, 11), y: 38400 }
-				]
+				xValueFormatString: "###",
+				type: "rangeSplineArea",
+				dataPoints: dataAhorro
+			}]
+		}
+
+		const optionsG = {
+			animationEnabled: true,
+			title:{
+				text: "Periodo de Retiro"
+			},
+			axisX: {
+				valueFormatString: "###"
+			},
+			axisY: {
+				title: "Inversion",
+				prefix: "$",
+				includeZero: false
+			},
+			data: [{
+				yValueFormatString: "$#,###",
+				xValueFormatString: "###",
+				type: "rangeSplineArea",
+				dataPoints: dataGasto
 			}]
 		}
 		  
 	 return (
 		<div>
-		  <CanvasJSChart options = {options}
-			  /* onRef = {ref => this.chart = ref} */
-		  />
-		  <CanvasJSChart options = {options}
-			  /* onRef = {ref => this.chart = ref} */
-		  />
+		  <CanvasJSChart options = {optionsA}/>
+		  <CanvasJSChart options = {optionsG}/>
 		</div>
 	  );
 	}

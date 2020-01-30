@@ -1,6 +1,4 @@
 import React, { Component } from "react";
-import Form from "../Components/Form"
-import ScrollableTabsButtonAuto from "../Components/AutomaticScrollButtons"
 import FormInit from "../Components/FormInit"
 import SpanTable from "../Components/SpanTable"
 import API from "../utils"
