@@ -19,6 +19,7 @@ class Inputs extends React.Component {
   handleClick = event => {
     event.preventDefault();
     API.sendCont(this.state);
+    this.props.onInputs(this.state);
   }
 
   handleInputChange = event => {

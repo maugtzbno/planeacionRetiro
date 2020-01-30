@@ -60,7 +60,7 @@ mongoose.connect(
     {
       nombre: "Mauricio",
       correo: "maugtzbno@gmail.com",
-      celular: 8116639856
+      celular: "8116639856"
     }
   ]
 

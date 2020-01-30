@@ -28,6 +28,5 @@ export default {
     //Send data to Server
     sendCont: function(data){
         return axios.post('/sendCont', data)
-
     }
 }

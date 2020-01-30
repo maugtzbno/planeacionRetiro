@@ -101,13 +101,13 @@ function retiro(data){
     aforeSaldo = data.aforeSaldo*1;
 
     tasaRealAhorro = 0.04;
-    pronosticoAhorro = ahorro(ingresoMensualBruto, tasaRetencion, gastoMensual, edadActual, edadRetiro, tasaRealAhorro, saldoActual, aforeSaldo)[0];
+    pronosticoAhorro = ahorro(ingresoMensualBruto, tasaRetencion, gastoMensual, edadActual, edadRetiro, tasaRealAhorro, saldoActual, afore, aforeSaldo)[0];
     tasaRealRetiro = 0.03; 
     pronosticoHerencia = gasto(gastoMensual, edadRetiro, edadEsperanza, tasaRealRetiro, pronosticoAhorro)[0]
 
     objetivoHerencia = 0;
     objetivoAhorro = calcSaldoInicial(gastoMensual, edadRetiro, edadEsperanza, tasaRealRetiro)
-    objetivoAhorroMensual = calcAhorroInicial(objetivoAhorro, tasaRetencion, gastoMensual, edadActual, edadRetiro, tasaRealAhorro, saldoActual, aforeSaldo)
+    objetivoAhorroMensual = calcAhorroInicial(objetivoAhorro, tasaRetencion, gastoMensual, edadActual, edadRetiro, tasaRealAhorro, saldoActual, afore, aforeSaldo)
     objetivoGastoMensual = ingresoMensualNeto - objetivoAhorroMensual
 
     const insData = [
@@ -185,15 +185,16 @@ router.post("/sendData", function(req, res){
 })
 
 router.use("/getScenario", function (req, res){
-    ahorroFin = ahorro(100000, 0.30, 65000, 30, 65, 0.04, 50000, 0, 0)[0];
-    ahorroScen = ahorro(100000, 0.30, 65000, 30, 65, 0.04, 50000, 0, 0)[1];
-    gastoFin = gasto(65000, 65, 85, 0.03, ahorroFin)[0]
-    gastoScen = gasto(65000, 65, 85, 0.03, ahorroFin)[1]
+    ahorroFin     = ahorro(100000, 0.30, 60000, 30, 65, 0.04, 50000, 0, 0)[0];
+    ahorroScen    = ahorro(100000, 0.30, 60000, 30, 65, 0.04, 50000, 0, 0)[1];
+    ahorroFinOpt  = ahorro(100000, 0.30, 60000, 30, 65, 0.05, 50000, 0, 0)[0];
+    ahorroScenOpt = ahorro(100000, 0.30, 60000, 30, 65, 0.05, 50000, 0, 0)[1];
 
-    ahorroFinOpt = ahorro(100000, 0.30, 65000, 30, 65, 0.05, 50000, 0, 0)[0];
-    ahorroScenOpt = ahorro(100000, 0.30, 65000, 30, 65, 0.05, 50000, 0, 0)[1];
-    gastoFinOpt = gasto(65000, 65, 85, 0.04, ahorroFin)[0]
-    gastoScenOpt = gasto(65000, 65, 85, 0.04, ahorroFin)[1]
+
+    gastoFin     = gasto(60000, 65, 85, 0.03, ahorroFin)[0]
+    gastoScen    = gasto(60000, 65, 85, 0.03, ahorroFin)[1]
+    gastoFinOpt  = gasto(65000, 65, 85, 0.04, ahorroFinOpt)[0]
+    gastoScenOpt = gasto(65000, 65, 85, 0.04, ahorroFinOpt)[1]
 
     data = {ahorroScen, ahorroScenOpt, gastoScen, gastoScenOpt}
     res.json(data)
@@ -201,11 +202,9 @@ router.use("/getScenario", function (req, res){
 
 //send data to database
 router.post("/sendCont", function(req, res){
-    console.log("dentro de router")
-    console.log(req.body)
-    dataCont = req.body
+    dataFin = [req.body]
     db.BaseCont.collection
-        .insertMany(dataCont)
+        .insertMany(dataFin)
         .then(data => res.json(data))
         .catch(err => res.status(422).json(err));
 })
